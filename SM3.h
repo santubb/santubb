@@ -1,33 +1,24 @@
+#pragma once
+
+typedef struct {
+    unsigned long iplen;        //输入消息长度
+    unsigned long state[8];     //A-H8个寄存器
+    unsigned char buffer[64];   //存储输入消息的缓冲区
+}sm3_context;
+
+void sm3_starts(sm3_context* ctx);//初始化ctx
+
+void sm3_update(sm3_context* ctx, unsigned char* input, int iplen_t);
 /*
- * SM3.h
- *
- * 为使此算法兼容32位、64位下Linux或Windows系统，
- * 选择 int 来表示 32 位整数。
- * 消息长度最大限定为 2**32 - 1（单位：比特），
- * 且为 8 的倍数（消息的最小单元为字节）。
+ * input    缓冲区中的data
+ * iplen_t     data长度
  */
-#ifndef _SM3_H_
-#define _SM3_H_
 
- /*
-  * SM3算法产生的哈希值大小（单位：字节）
-  */
-#define SM3_HASH_SIZE 32 
+void sm3_finish(sm3_context* ctx, unsigned char output[32]);//输出最终结果
 
-  /*
-   * SM3上下文
-   */
-typedef struct SM3Context
-{
-    unsigned int intermediateHash[SM3_HASH_SIZE / 4];
-    unsigned char messageBlock[64];
-} SM3Context;
-
+void sm3(unsigned char* input, int iplen_t, unsigned char output[32]);
 /*
- * SM3计算函数
- */
-unsigned char* SM3Calc(const unsigned char* message,
-    unsigned int messageLen, unsigned char digest[SM3_HASH_SIZE]);
-
-#endif // _SM3_H_#pragma once
-
+ * input    缓冲区中的data
+ * iplen_t     data长度
+ * output   最终8个寄存器中的结果
+ */#pragma once
