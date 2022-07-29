@@ -1,4 +1,6 @@
-def len_ext_atk(msg, ext, n):
+#len_extend
+
+def len_extend_attack(msg, ext, n):
     hm = SM3(msg)              # H(m)
     Hm = []
     for i in range(8):
@@ -33,7 +35,7 @@ if __name__ == '__main__':
     pad = n - len(message) - 16 - 1                # 补0个数=总长-消息-消息长度-1
     new_m = message + '8' + pad*'0' + len_m + extend    # new_m = message||1000...|| |message| ||extend
     res_new = SM3(new_m)
-    res = len_ext_atk(message, extend, n)
+    res = len_extend_attack(message, extend, n)
     print("新消息的哈希值为:", res_new)
     print("长度扩展攻击结果:", res)
     if res_new == res:
