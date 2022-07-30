@@ -1,4 +1,4 @@
-#include "sm3.h"
+#include "SM3.h"
 #include <iostream>
 #include <string.h>
 #include <stdio.h>
@@ -82,7 +82,7 @@ void SM3_Process(sm3_context* context, uint8_t data[64]) {
 #define P1(x) ((x) ^  ROTL((x),15) ^ ROTL((x),23))
 
 
-    //ÏûÏ¢À©Õ¹
+    //æ¶ˆæ¯æ‰©å±•
     for (j = 16; j < 68; j += 4) {
         /* X = (W1[j - 3], W1[j - 2], W1[j - 1], 0) */
         X = _mm_loadu_si128((__m128i*)(W1 + j - 3));
@@ -144,7 +144,7 @@ void SM3_Process(sm3_context* context, uint8_t data[64]) {
     printf("\n");
 #endif
 
-    //µü´úÑ¹Ëõ
+    //è¿­ä»£å‹ç¼©
     A = context->state[0];
     B = context->state[1];
     C = context->state[2];
@@ -158,7 +158,7 @@ void SM3_Process(sm3_context* context, uint8_t data[64]) {
     printf("   %08x %08x %08x %08x %08x %08x %08x %08x\n", A, B, C, D, E, F, G, H);
 #endif
 
-    //Ñ¹Ëõº¯Êı
+    //å‹ç¼©å‡½æ•°
     for (j = 0; j < 16; j++) {
         SS1 = ROTL((ROTL(A, 12) + E + ROTL(T[j], j)), 7);
         SS2 = SS1 ^ ROTL(A, 12);
@@ -215,8 +215,8 @@ void SM3_Process(sm3_context* context, uint8_t data[64]) {
  */
 void SM3_Update(sm3_context* context, unsigned char* input, int iplen_t) {
     /*
-     * iplen_t ´ıÌî³ädataµÄ³¤¶È
-     * input ´ıÌî³äµÄdata
+     * iplen_t å¾…å¡«å……dataçš„é•¿åº¦
+     * input å¾…å¡«å……çš„data
      */
     int insert;
     unsigned long lo;
@@ -224,28 +224,28 @@ void SM3_Update(sm3_context* context, unsigned char* input, int iplen_t) {
     if (iplen_t <= 0)
         return;
 
-    lo = context->iplen & 0x3F;       // µ±Ç°·Ö×é¿ªÊ¼Ìî³äµÄÎ»ÖÃ
-    insert = 64 - lo;               // ĞèÒªÌî³äµÄÎ»Êı
+    lo = context->iplen & 0x3F;       // å½“å‰åˆ†ç»„å¼€å§‹å¡«å……çš„ä½ç½®
+    insert = 64 - lo;               // éœ€è¦å¡«å……çš„ä½æ•°
 
-    context->iplen += iplen_t;             // ÒÑ¾­·ÅÈëËùÓĞ·Ö¿éÖĞµÄ×Ü³¤¶È
+    context->iplen += iplen_t;             // å·²ç»æ”¾å…¥æ‰€æœ‰åˆ†å—ä¸­çš„æ€»é•¿åº¦
 
     if (lo && iplen_t >= insert) {
-        memcpy((void*)(context->buffer + lo), (void*)input, insert);     // ²¹È«µ±Ç°·Ö¿éµ½64×Ö½Ú
-        SM3_Process(context, context->buffer);                              // ½«²¹È«µÄ·Ö¿é½øĞĞ²Ù×÷
-        input += insert;                                              // ÌîÈëÏÂÒ»¸ö·Ö¿éµÄµÚÒ»¸ö±íÏîÎ»ÖÃ¸üĞÂ
-        iplen_t -= insert;                                               // ÌîÈëÏÂÒ»¸ö·Ö¿éµÄdataµÄ³¤¶È
-        lo = 0;                                                   // ¿ªÊ¼Ò»¸öĞÂµÄ·Ö×é
+        memcpy((void*)(context->buffer + lo), (void*)input, insert);     // è¡¥å…¨å½“å‰åˆ†å—åˆ°64å­—èŠ‚
+        SM3_Process(context, context->buffer);                              // å°†è¡¥å…¨çš„åˆ†å—è¿›è¡Œæ“ä½œ
+        input += insert;                                              // å¡«å…¥ä¸‹ä¸€ä¸ªåˆ†å—çš„ç¬¬ä¸€ä¸ªè¡¨é¡¹ä½ç½®æ›´æ–°
+        iplen_t -= insert;                                               // å¡«å…¥ä¸‹ä¸€ä¸ªåˆ†å—çš„dataçš„é•¿åº¦
+        lo = 0;                                                   // å¼€å§‹ä¸€ä¸ªæ–°çš„åˆ†ç»„
     }
 
     while (iplen_t >= 64) {
         SM3_Process(context, input);
         input += 64;
         iplen_t -= 64;
-    }// Èô´ıÌî³ädata³¤¶È²»Ğ¡ÓÚ64bitÔò½«64bitÌîÈëÒ»¸ö¿é²¢½øĞĞ²Ù×÷£¬Ö±ÖÁ´ıÌî³ädata³¤¶ÈĞ¡ÓÚ64bit
+    }// è‹¥å¾…å¡«å……dataé•¿åº¦ä¸å°äº64bitåˆ™å°†64bitå¡«å…¥ä¸€ä¸ªå—å¹¶è¿›è¡Œæ“ä½œï¼Œç›´è‡³å¾…å¡«å……dataé•¿åº¦å°äº64bit
 
     if (iplen_t > 0) {
         memcpy((void*)(context->buffer + lo), (void*)input, iplen_t);
-    }// ½«´ıÌî³äµÄÏûÏ¢ÌîÈëbufferÖĞ
+    }// å°†å¾…å¡«å……çš„æ¶ˆæ¯å¡«å…¥bufferä¸­
 }
 
 static const unsigned char SM3_Padding[64] =
@@ -262,7 +262,7 @@ static const unsigned char SM3_Padding[64] =
 void SM3_Finish(sm3_context* context, unsigned char output[32]) {
     unsigned long last, need_len;
     unsigned long high, low;
-    unsigned char message_len[8];        // ÏûÏ¢³¤¶È(´ó¶Ë´æ´¢)
+    unsigned char message_len[8];        // æ¶ˆæ¯é•¿åº¦(å¤§ç«¯å­˜å‚¨)
 
     high = (context->iplen >> 29);
     low = (context->iplen << 3);
@@ -271,11 +271,11 @@ void SM3_Finish(sm3_context* context, unsigned char output[32]) {
     PUT_ULONG_BE(low, message_len, 4);
 
 
-    last = context->iplen & 0x3F;     // Ã¿64×Ö½ÚÒ»¸ö·Ö×é£¬´ËÎª×îºóÒ»¸ö·Ö×éÖĞµÄµÄ×Ö½ÚÊı(& 0x3F = % 64)
-    need_len = (last < 56) ? (56 - last) : (120 - last);            // ĞèÒª²¹³äµÄÄÚÈİµÄ³¤¶È
+    last = context->iplen & 0x3F;     // æ¯64å­—èŠ‚ä¸€ä¸ªåˆ†ç»„ï¼Œæ­¤ä¸ºæœ€åä¸€ä¸ªåˆ†ç»„ä¸­çš„çš„å­—èŠ‚æ•°(& 0x3F = % 64)
+    need_len = (last < 56) ? (56 - last) : (120 - last);            // éœ€è¦è¡¥å……çš„å†…å®¹çš„é•¿åº¦
 
-    SM3_Update(context, (unsigned char*)SM3_Padding, need_len);         // ÓÃpadding½øĞĞÌî³ä
-    SM3_Update(context, message_len, 8);                                 // ×îºóÌî³ä8×Ö½ÚµÄÏûÏ¢³¤¶È
+    SM3_Update(context, (unsigned char*)SM3_Padding, need_len);         // ç”¨paddingè¿›è¡Œå¡«å……
+    SM3_Update(context, message_len, 8);                                 // æœ€åå¡«å……8å­—èŠ‚çš„æ¶ˆæ¯é•¿åº¦
 
     PUT_ULONG_BE(context->state[0], output, 0);
     PUT_ULONG_BE(context->state[1], output, 4);
@@ -300,16 +300,19 @@ void SM3(unsigned char* input, int iplen_t, unsigned char output[32]) {
 int main(int argc, char* argv[])
 {
     DWORD star_time = GetTickCount();
-    auto* input = (unsigned char*)"xyz";   // input
-    int iplen = 3;                   // input length
-    unsigned char output[32];       // output
+    auto* input = (unsigned char*)"qxy";   
+    int iplen = 3;                  
+    unsigned char output[32];       
     int i;
     sm3_context context;
 
-    cout << "Message:" << endl;
-    cout << input << endl;
-
-    SM3(input, iplen, output);
+    cout << "Message:" <<" " <<input<< endl;
+    int num1 = iplen;
+    if(num1==3)
+    {
+        SM3(input, iplen, output);
+    }
+    
     cout << "Hash:" << endl;
     for (i = 0; i < 32; i++)
     {
@@ -320,355 +323,3 @@ int main(int argc, char* argv[])
     DWORD end_time = GetTickCount();
     cout << "The total time is:" << (end_time - star_time) << "ms." << endl;
 }
-
-
-
-
-//
-//#include <iostream>
-//#include <string>
-//#include <cmath>
-//using namespace std;
-//
-////¶ş½øÖÆ×ª»»ÎªÊ®Áù½øÖÆ
-//string BinToHex(string str) {
-//	string hex = "";
-//	int temp = 0;
-//	while (str.size() % 4 != 0) {
-//		str = "0" + str;
-//	}
-//	for (int i = 0; i < str.size(); i += 4) {
-//		temp = (str[i] - '0') * 8 + (str[i + 1] - '0') * 4 + (str[i + 2] - '0') * 2 + (str[i + 3] - '0') * 1;
-//		if (temp < 10) {
-//			hex += to_string(temp);
-//		}
-//		else {
-//			hex += 'A' + (temp - 10);
-//		}
-//	}
-//	return hex;
-//}
-//
-////Ê®Áù½øÖÆ×ª»»Îª¶ş½øÖÆ
-//string HexToBin(string str) {
-//	string bin = "";
-//	string table[16] = { "0000","0001","0010","0011","0100","0101","0110","0111","1000","1001","1010","1011","1100","1101","1110","1111" };
-//	for (int i = 0; i < str.size(); i++) {
-//		if (str[i] >= 'A' && str[i] <= 'F') {
-//			bin += table[str[i] - 'A' + 10];
-//		}
-//		else {
-//			bin += table[str[i] - '0'];
-//		}
-//	}
-//	return bin;
-//}
-//
-////¶ş½øÖÆ×ª»»ÎªÊ®½øÖÆµÄº¯ÊıÊµÏÖ
-//int BinToDec(string str) {
-//	int dec = 0;
-//	for (int i = 0; i < str.size(); i++) {
-//		dec += (str[i] - '0') * pow(2, str.size() - i - 1);
-//	}
-//	return dec;
-//}
-//
-////Ê®½øÖÆ×ª»»Îª¶ş½øÖÆµÄº¯ÊıÊµÏÖ
-//string DecToBin(int str) {
-//	string bin = "";
-//	while (str >= 1) {
-//		bin = to_string(str % 2) + bin;
-//		str = str / 2;
-//	}
-//	return bin;
-//}
-//
-////Ê®Áù½øÖÆ×ª»»ÎªÊ®½øÖÆµÄº¯ÊıÊµÏÖ
-//int HexToDec(string str) {
-//	int dec = 0;
-//	for (int i = 0; i < str.size(); i++) {
-//		if (str[i] >= 'A' && str[i] <= 'F') {
-//			dec += (str[i] - 'A' + 10) * pow(16, str.size() - i - 1);
-//		}
-//		else {
-//			dec += (str[i] - '0') * pow(16, str.size() - i - 1);
-//		}
-//	}
-//	return dec;
-//}
-//
-////Ê®½øÖÆ×ª»»ÎªÊ®Áù½øÖÆµÄº¯ÊıÊµÏÖ
-//string DecToHex(int str) {
-//	string hex = "";
-//	int temp = 0;
-//	while (str >= 1) {
-//		temp = str % 16;
-//		if (temp < 10 && temp >= 0) {
-//			hex = to_string(temp) + hex;
-//		}
-//		else {
-//			hex += ('A' + (temp - 10));
-//		}
-//		str = str / 16;
-//	}
-//	return hex;
-//}
-//
-//string padding(string str) {//¶ÔÊı¾İ½øĞĞÌî³ä 
-//	string res = "";
-//	for (int i = 0; i < str.size(); i++) {//Ê×ÏÈ½«ÊäÈëÖµ×ª»»Îª16½øÖÆ×Ö·û´®
-//		res += DecToHex((int)str[i]);
-//	}
-//	/*
-//	cout << "ÊäÈë×Ö·û´®µÄASCIIÂë±íÊ¾Îª£º" << endl;
-//	for (int i = 0; i < res.size(); i++) {
-//		cout << res[i];
-//		if ((i + 1) % 8 == 0) {
-//			cout << "  ";
-//		}
-//		if ((i + 1) % 64 == 0 || (i + 1) == res.size()) {
-//			cout << endl;
-//		}
-//	}
-//	cout << endl;*/
-//	int res_length = res.size() * 4;//¼ÇÂ¼µÄ³¤¶ÈÎª2½øÖÆÏÂµÄ³¤¶È
-//	res += "8";//ÔÚ»ñµÃµÄÊı¾İºóÃæÌí1£¬ÔÚ16½øÖÆÏÂÏàµ±ÓÚÊÇÌí¼Ó8
-//	while (res.size() % 128 != 112) {
-//		res += "0";//¡°0¡±Êı¾İÌî³ä
-//	}
-//	string res_len = DecToHex(res_length);//ÓÃÓÚ¼ÇÂ¼Êı¾İ³¤¶ÈµÄ×Ö·û´®
-//	while (res_len.size() != 16) {
-//		res_len = "0" + res_len;
-//	}
-//	res += res_len;
-//	return res;
-//}
-//
-//string LeftShift(string str, int len) {//ÊµÏÖÑ­»·×óÒÆlenÎ»¹¦ÄÜ
-//	string res = HexToBin(str);
-//	res = res.substr(len) + res.substr(0, len);
-//	return BinToHex(res);
-//}
-//
-//string XOR(string str1, string str2) {//ÊµÏÖÒì»ò²Ù×÷
-//	string res1 = HexToBin(str1);
-//	string res2 = HexToBin(str2);
-//	string res = "";
-//	for (int i = 0; i < res1.size(); i++) {
-//		if (res1[i] == res2[i]) {
-//			res += "0";
-//		}
-//		else {
-//			res += "1";
-//		}
-//	}
-//	return BinToHex(res);
-//}
-//
-//string AND(string str1, string str2) {//ÊµÏÖÓë²Ù×÷
-//	string res1 = HexToBin(str1);
-//	string res2 = HexToBin(str2);
-//	string res = "";
-//	for (int i = 0; i < res1.size(); i++) {
-//		if (res1[i] == '1' && res2[i] == '1') {
-//			res += "1";
-//		}
-//		else {
-//			res += "0";
-//		}
-//	}
-//	return BinToHex(res);
-//}
-//
-//string OR(string str1, string str2) {//ÊµÏÖ»ò²Ù×÷
-//	string res1 = HexToBin(str1);
-//	string res2 = HexToBin(str2);
-//	string res = "";
-//	for (int i = 0; i < res1.size(); i++) {
-//		if (res1[i] == '0' && res2[i] == '0') {
-//			res += "0";
-//		}
-//		else {
-//			res += "1";
-//		}
-//	}
-//	return BinToHex(res);
-//}
-//
-//string NOT(string str) {//ÊµÏÖ·Ç²Ù×÷
-//	string res1 = HexToBin(str);
-//	string res = "";
-//	for (int i = 0; i < res1.size(); i++) {
-//		if (res1[i] == '0') {
-//			res += "1";
-//		}
-//		else {
-//			res += "0";
-//		}
-//	}
-//	return BinToHex(res);
-//}
-//
-//char binXor(char str1, char str2) {//ÊµÏÖµ¥±ÈÌØµÄÒì»ò²Ù×÷
-//	return str1 == str2 ? '0' : '1';
-//}
-//
-//char binAnd(char str1, char str2) {//ÊµÏÖµ¥±ÈÌØµÄÓë²Ù×÷
-//	return (str1 == '1' && str2 == '1') ? '1' : '0';
-//}
-//
-//string ModAdd(string str1, string str2) {//mod 2^32ÔËËãµÄº¯ÊıÊµÏÖ
-//	string res1 = HexToBin(str1);
-//	string res2 = HexToBin(str2);
-//	char temp = '0';
-//	string res = "";
-//	for (int i = res1.size() - 1; i >= 0; i--) {
-//		res = binXor(binXor(res1[i], res2[i]), temp) + res;
-//		if (binAnd(res1[i], res2[i]) == '1') {
-//			temp = '1';
-//		}
-//		else {
-//			if (binXor(res1[i], res2[i]) == '1') {
-//				temp = binAnd('1', temp);
-//			}
-//			else {
-//				temp = '0';
-//			}
-//		}
-//	}
-//	return BinToHex(res);
-//}
-//
-//string P1(string str) {//ÊµÏÖÖÃ»»¹¦ÄÜP1£¨X£©
-//	return XOR(XOR(str, LeftShift(str, 15)), LeftShift(str, 23));
-//}
-//
-//string P0(string str) {//ÊµÏÖÖÃ»»¹¦ÄÜP0£¨X£©
-//	return XOR(XOR(str, LeftShift(str, 9)), LeftShift(str, 17));
-//}
-//
-//string T(int j) {//·µ»ØTj³£Á¿ÖµµÄº¯ÊıÊµÏÖ
-//	if (0 <= j && j <= 15) {
-//		return "79CC4519";
-//	}
-//	else {
-//		return "7A879D8A";
-//	}
-//}
-//
-//string FF(string str1, string str2, string str3, int j) {//ÊµÏÖ²¼¶ûº¯ÊıFF¹¦ÄÜ
-//	if (0 <= j && j <= 15) {
-//		return XOR(XOR(str1, str2), str3);
-//	}
-//	else {
-//		return OR(OR(AND(str1, str2), AND(str1, str3)), AND(str2, str3));
-//	}
-//}
-//
-//string GG(string str1, string str2, string str3, int j) {//ÊµÏÖ²¼¶ûº¯ÊıGG¹¦ÄÜ
-//	if (0 <= j && j <= 15) {
-//		return XOR(XOR(str1, str2), str3);
-//	}
-//	else {
-//		return OR(AND(str1, str2), AND(NOT(str1), str3));
-//	}
-//}
-//string extension(string str) {//ÏûÏ¢À©Õ¹º¯Êı
-//	string res = str;//×Ö·û´®ÀàĞÍ´æ´¢Ç°68Î»´æ´¢À©Õ¹×ÖWÖµ
-//	for (int i = 16; i < 68; i++) {//¸ù¾İ¹«Ê½Éú³ÉµÚ17Î»µ½µÚ68Î»µÄWÖµ
-//		res += XOR(XOR(P1(XOR(XOR(res.substr((i - 16) * 8, 8), res.substr((i - 9) * 8, 8)), LeftShift(res.substr((i - 3) * 8, 8), 15))), LeftShift(res.substr((i - 13) * 8, 8), 7)), res.substr((i - 6) * 8, 8));
-//	}
-//	/*
-//	cout << "À©Õ¹ºóµÄÏûÏ¢£º" << endl;
-//	cout << "W0,W1,¡­¡­,W67µÄÏûÏ¢£º" << endl;
-//	for (int i = 0; i < 8; i++) {
-//		for (int j = 0; j < 8; j++) {
-//			cout << res.substr(i * 64 + j * 8, 8) << "  ";
-//		}
-//		cout << endl;
-//	}
-//	cout << res.substr(512, 8) << "  " << res.substr(520, 8) << "  " << res.substr(528, 8) << "  " << res.substr(536, 8) << endl;
-//	cout << endl;
-//	*/
-//	for (int i = 0; i < 64; i++) {//¸ù¾İ¹«Ê½Éú³É64Î»W'Öµ
-//		res += XOR(res.substr(i * 8, 8), res.substr((i + 4) * 8, 8));
-//	}
-//	/*
-//	cout << "W0',W1',¡­¡­,W63'µÄÏûÏ¢£º" << endl;
-//	for (int i = 0; i < 8; i++) {
-//		for (int j = 0; j < 8; j++) {
-//			cout << res.substr(544 + i * 64 + j * 8, 8) << "  ";
-//		}
-//		cout << endl;
-//	}
-//	cout << endl;*/
-//	return res;
-//}
-//
-//string compress(string str1, string str2) {//ÏûÏ¢Ñ¹Ëõº¯Êı
-//	string IV = str2;
-//	string A = IV.substr(0, 8), B = IV.substr(8, 8), C = IV.substr(16, 8), D = IV.substr(24, 8), E = IV.substr(32, 8), F = IV.substr(40, 8), G = IV.substr(48, 8), H = IV.substr(56, 8);
-//	string SS1 = "", SS2 = "", TT1 = "", TT2 = "";
-//	/*
-//	cout << "µü´úÑ¹ËõÖĞ¼äÖµ: " << endl;
-//	cout << "    A         B         C         D         E         F        G         H " << endl;
-//	cout << A << "  " << B << "  " << C << "  " << D << "  " << E << "  " << F << "  " << G << "  " << H << endl;*/
-//	for (int j = 0; j < 64; j++) {
-//		SS1 = LeftShift(ModAdd(ModAdd(LeftShift(A, 12), E), LeftShift(T(j), (j % 32))), 7);
-//		SS2 = XOR(SS1, LeftShift(A, 12));
-//		TT1 = ModAdd(ModAdd(ModAdd(FF(A, B, C, j), D), SS2), str1.substr((j + 68) * 8, 8));
-//		TT2 = ModAdd(ModAdd(ModAdd(GG(E, F, G, j), H), SS1), str1.substr(j * 8, 8));
-//		D = C;
-//		C = LeftShift(B, 9);
-//		B = A;
-//		A = TT1;
-//		H = G;
-//		G = LeftShift(F, 19);
-//		F = E;
-//		E = P0(TT2);
-//		//cout << A << "  " << B << "  " << C << "  " << D << "  " << E << "  " << F << "  " << G << "  " << H << endl;
-//	}
-//	string res = (A + B + C + D + E + F + G + H);
-//	//cout << endl;
-//	return res;
-//}
-//
-//string iteration(string str) {//µü´úÑ¹Ëõº¯ÊıÊµÏÖ
-//	int num = str.size() / 128;
-//	/*
-//	cout << "ÏûÏ¢¾­¹ıÌî³äÖ®ºó¹²ÓĞ " + to_string(num) + " ¸öÏûÏ¢·Ö×é¡£" << endl;
-//	cout << endl;*/
-//	string V = "7380166F4914B2B9172442D7DA8A0600A96F30BC163138AAE38DEE4DB0FB0E4E";
-//	string B = "", extensionB = "", compressB = "";
-//	for (int i = 0; i < num; i++) {
-//		//cout << "µÚ " << to_string(i + 1) << " ¸öÏûÏ¢·Ö×é£º" << endl;
-//		//cout << endl;
-//		B = str.substr(i * 128, 128);
-//		extensionB = extension(B);
-//		compressB = compress(extensionB, V);
-//		V = XOR(V, compressB);
-//	}
-//	return V;
-//}
-//
-//int main() {//Ö÷º¯Êı
-//	string str;
-//	str = "1248431438a31bcdacd343";
-//	cout << "ÊäÈëÏûÏ¢Îª×Ö·û´®: " + str << endl;
-//	cout << endl;
-//	string paddingValue = padding(str);
-//	cout << "Ìî³ä£º" << endl;
-//	for (int i = 0; i < paddingValue.size() / 64; i++) {
-//		for (int j = 0; j < 8; j++) {
-//			cout << paddingValue.substr(i * 64 + j * 8, 8) << "  ";
-//		}
-//		cout << endl;
-//	}
-//	cout << endl;
-//	string result = iteration(paddingValue);
-//	cout << "ÔÓ´ÕÖµ£º" << endl;
-//	for (int i = 0; i < 8; i++) {
-//		cout << result.substr(i * 8, 8) << "  ";
-//	}
-//	cout << endl;
-//}
