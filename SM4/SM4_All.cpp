@@ -80,7 +80,7 @@ int main()
 	auto end1 = system_clock::now();
 	auto duration1 = duration_cast<microseconds>(end1 - start1);
 	//cout << "For Spent" << 1000 * double(duration1.count()) * microseconds::period::num / microseconds::period::den << " ms." << endl;
-	cout << "³õÊ¼SM4 " << 1000 * double(duration1.count()) * microseconds::period::num / microseconds::period::den << " ms." << endl;
+	cout << "åˆå§‹SM4 " << 1000 * double(duration1.count()) * microseconds::period::num / microseconds::period::den << " ms." << endl;
 
 	auto start4 = system_clock::now();
 	for (int i = 0; i < length; i += 4)
@@ -90,7 +90,7 @@ int main()
 	auto end4 = system_clock::now();
 	auto duration4 = duration_cast<microseconds>(end4 - start4);
 	//cout << "For Spent" << 1000 * double(duration1.count()) * microseconds::period::num / microseconds::period::den << " ms." << endl;
-	cout << "Á÷Ë®ÏßSM4 " << 1000 * double(duration4.count()) * microseconds::period::num / microseconds::period::den << " ms." << endl;
+	cout << "æµæ°´çº¿SM4 " << 1000 * double(duration4.count()) * microseconds::period::num / microseconds::period::den << " ms." << endl;
 
 	auto start3 = system_clock::now();
 	//int i;
@@ -111,7 +111,7 @@ int main()
 	auto end3 = system_clock::now();
 	auto duration3 = duration_cast<microseconds>(end3 - start3);
 	//cout << "crypt_enc_1 " << 1000 * double(duration3.count()) * microseconds::period::num / microseconds::period::den << " ms." << endl;
-	cout << "Ñ­»·Õ¹¿ª " << 1000 * double(duration3.count()) * microseconds::period::num / microseconds::period::den << " ms." << endl;
+	cout << "å¾ªç¯å±•å¼€ " << 1000 * double(duration3.count()) * microseconds::period::num / microseconds::period::den << " ms." << endl;
 
 	int step = (length / thread_num) / 4;
 	thread threads[thread_num];
@@ -129,7 +129,7 @@ int main()
 	auto end2 = system_clock::now();
 	auto duration2 = duration_cast<microseconds>(end2 - start2);
 	//cout << "crypt_enc_thread" << 1000 * double(duration2.count()) * microseconds::period::num / microseconds::period::den << " ms." << endl;
-	cout << "¶àÏß³Ì " << 1000 * double(duration2.count()) * microseconds::period::num / microseconds::period::den << " ms." << endl;
+	cout << "å¤šçº¿ç¨‹ " << 1000 * double(duration2.count()) * microseconds::period::num / microseconds::period::den << " ms." << endl;
 
 	//for (int i = 1; i < 33; i++)
 	//{
@@ -141,7 +141,7 @@ int main()
 	return 0;
 }
 
-void son_key(int n)//nÎªÂÖÊı
+void son_key(int n)//nä¸ºè½®æ•°
 {
 	unsigned long kk = K[n] ^ K[n + 1] ^ K[n + 2] ^ CK[n - 1];
 	unsigned char b0 = SBOX[unsigned char(kk / 0x1000000)];
@@ -165,7 +165,7 @@ void plaintext(unsigned long x0, unsigned long x1, unsigned long x2, unsigned lo
 	kk = b0 * 0x1000000 + b1 * 0x10000 + b2 * 0x100 + b3;
 	cipher[n + 3] = (kk ^ CROL(kk, 2) ^ CROL(kk, 10) ^ CROL(kk, 18) ^ CROL(kk, 24)) ^ x0;
 }
-void crypt_enc_for(int q, unsigned long input[])//³õÊ¼SM4
+void crypt_enc_for(int q, unsigned long input[])//åˆå§‹SM4
 {
 
 	K[0] = input[q] ^ FK[0];
@@ -183,7 +183,7 @@ void crypt_enc_for(int q, unsigned long input[])//³õÊ¼SM4
 	//cout << "Finalcipher: 0x" << hex << cipher[35] << cipher[34] << cipher[33] << cipher[32] << endl;
 
 }
-void crypt_enc(int q, unsigned long input[])//Á÷Ë®ÏßSM4
+void crypt_enc(int q, unsigned long input[])//æµæ°´çº¿SM4
 {
 
 	K[0] = input[q] ^ FK[0];
@@ -198,7 +198,7 @@ void crypt_enc(int q, unsigned long input[])//Á÷Ë®ÏßSM4
 	//cout << "Finalcipher: 0x" << hex << cipher[35] << cipher[34] << cipher[33] << cipher[32] << endl;
 
 }
-void crypt_enc_1(int q, unsigned long input[])//Ñ­»·Õ¹¿ª
+void crypt_enc_1(int q, unsigned long input[])//å¾ªç¯å±•å¼€
 {
 
 	K[0] = input[q] ^ FK[0];
@@ -228,7 +228,7 @@ void crypt_enc_1(int q, unsigned long input[])//Ñ­»·Õ¹¿ª
 	//cout << "Finalcipher: 0x" << hex << cipher[35] << cipher[34] << cipher[33] << cipher[32] << endl;
 
 }
-void crypt_enc_thread(int num1, int num2, unsigned long input[])//¶àÏß³Ì
+void crypt_enc_thread(int num1, int num2, unsigned long input[])//å¤šçº¿ç¨‹
 {
 	for (int i = num1; i < num2; i += 4)
 	{
