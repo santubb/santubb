@@ -1,0 +1,17 @@
+void crypt_enc_thread(int num1, int num2, unsigned long input[])//多线程
+{
+	for (int i = num1; i < num2; i += 4)
+	{
+		K[0] = input[i] ^ FK[0];
+		K[1] = input[i + 1] ^ FK[1];
+		K[2] = input[i + 2] ^ FK[2];
+		K[3] = input[i + 3] ^ FK[3];
+		for (int i = 1; i < 33; i++)
+		{
+			son_key(i);
+			plaintext(cipher[i - 1], cipher[i], cipher[i + 1], cipher[i + 2], i);
+			//cout << "turn: " << i << "\nkey: 0x" << hex << K[i + 3] << "\ncipher: 0x" << hex << cipher[i + 3] << endl;
+		}
+		//cout << "Finalcipher: 0x" << hex << cipher[35] << cipher[34] << cipher[33] << cipher[32] << endl;
+	}
+}
